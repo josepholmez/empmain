@@ -10,19 +10,27 @@ export class EmployeeService {
 
   constructor(private http: HttpClient) { }
 
+  // call the link in RestController (http://localhost:8080/employee/all)
   public getEmployees(): Observable<Employee[]> {
-    return this.http.get<Employee[]>(`${this.apiServerUrl}/employee/all`);
+    let url = `${this.apiServerUrl}/employee/all`;
+    return this.http.get<Employee[]>(url);
   }
 
+  // call the link in RestController (http://localhost:8080/employee/add)
   public addEmployee(employee: Employee): Observable<Employee> {
-    return this.http.post<Employee>(`${this.apiServerUrl}/employee/add`, employee);
+    let url = `${this.apiServerUrl}/employee/add`;
+    return this.http.post<Employee>(url, employee);
   }
 
+  // call the link in RestController (http://localhost:8080/employee/update)
   public updateEmployee(employee: Employee): Observable<Employee> {
-    return this.http.put<Employee>(`${this.apiServerUrl}/employee/update`, employee);
+    let url = `${this.apiServerUrl}/employee/update`;
+    return this.http.put<Employee>(url, employee);
   }
 
+  // call the link in RestController (http://localhost:8080/employee/delete/{id})
   public deleteEmployee(employeeId: number): Observable<void> {
-    return this.http.delete<void>(`${this.apiServerUrl}/employee/delete/${employeeId}`);
+    let url = `${this.apiServerUrl}/employee/delete/${employeeId}`;
+    return this.http.delete<void>(url);
   }
 }

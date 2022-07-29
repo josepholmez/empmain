@@ -14,22 +14,22 @@ export class AppComponent implements OnInit {
   public editEmployee: Employee;
   public deleteEmployee: Employee;
 
-  constructor(private employeeService: EmployeeService){}
+  constructor(private employeeService: EmployeeService) { }
 
   ngOnInit() {
     this.getEmployees();
   }
 
   public getEmployees(): void {
-    this.employeeService.getEmployees().subscribe(
-      (response: Employee[]) => {
+    this.employeeService.getEmployees()
+      .subscribe((response: Employee[]) => {
         this.employees = response;
         console.log(this.employees);
       },
-      (error: HttpErrorResponse) => {
-        alert(error.message);
-      }
-    );
+        (error: HttpErrorResponse) => {
+          alert(error.message);
+        }
+      );
   }
 
   public onAddEmloyee(addForm: NgForm): void {
@@ -48,15 +48,15 @@ export class AppComponent implements OnInit {
   }
 
   public onUpdateEmloyee(employee: Employee): void {
-    this.employeeService.updateEmployee(employee).subscribe(
-      (response: Employee) => {
-        console.log(response);
+    this.employeeService.updateEmployee(employee)
+      .subscribe((emp: Employee) => {
+        console.log(emp);
         this.getEmployees();
       },
-      (error: HttpErrorResponse) => {
-        alert(error.message);
-      }
-    );
+        (error: HttpErrorResponse) => {
+          alert(error.message);
+        }
+      );
   }
 
   public onDeleteEmloyee(employeeId: number): void {
@@ -76,9 +76,9 @@ export class AppComponent implements OnInit {
     const results: Employee[] = [];
     for (const employee of this.employees) {
       if (employee.name.toLowerCase().indexOf(key.toLowerCase()) !== -1
-      || employee.email.toLowerCase().indexOf(key.toLowerCase()) !== -1
-      || employee.phone.toLowerCase().indexOf(key.toLowerCase()) !== -1
-      || employee.jobTitle.toLowerCase().indexOf(key.toLowerCase()) !== -1) {
+        || employee.email.toLowerCase().indexOf(key.toLowerCase()) !== -1
+        || employee.phone.toLowerCase().indexOf(key.toLowerCase()) !== -1
+        || employee.jobTitle.toLowerCase().indexOf(key.toLowerCase()) !== -1) {
         results.push(employee);
       }
     }
@@ -108,7 +108,6 @@ export class AppComponent implements OnInit {
     container.appendChild(button);
     button.click();
   }
-
 
 
 }
