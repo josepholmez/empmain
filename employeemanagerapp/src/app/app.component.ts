@@ -1,29 +1,30 @@
 import { Component, OnInit } from '@angular/core';
-import { Employee } from './employee';
-import { EmployeeService } from './employee.service';
+import { Employee } from '../employee/employee';
+import { EmployeeService } from '../employee/employee.service';
 import { HttpErrorResponse } from '@angular/common/http';
 import { NgForm } from '@angular/forms';
 
 @Component({
-  selector: 'app-root',
+  selector: 'emp-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
 export class AppComponent implements OnInit {
+  
   public employees: Employee[];
   public editEmployee: Employee;
   public deleteEmployee: Employee;
 
-  constructor(private employeeService: EmployeeService) { }
+  constructor(private employeeService: EmployeeService) {}
 
   ngOnInit() {
     this.getEmployees();
   }
 
-  public getEmployees(): void {
-    this.employeeService.getEmployees()
-      .subscribe((response: Employee[]) => {
-        this.employees = response;
+  public getEmployees() {
+    this.employeeService.getEmployees().subscribe(
+      (empList: Employee[]) => {
+        this.employees = empList;
         console.log(this.employees);
       },
         (error: HttpErrorResponse) => {
@@ -32,24 +33,27 @@ export class AppComponent implements OnInit {
       );
   }
 
-  public onAddEmloyee(addForm: NgForm): void {
-    document.getElementById('add-employee-form').click();
-    this.employeeService.addEmployee(addForm.value).subscribe(
-      (response: Employee) => {
-        console.log(response);
+  public onAddEmloyee(empForm: NgForm) {
+     this.employeeService.addEmployee(empForm.value).subscribe(
+      (emp: Employee) => {
+        console.log(emp);
         this.getEmployees();
-        addForm.reset();
+        empForm.reset();
       },
       (error: HttpErrorResponse) => {
         alert(error.message);
-        addForm.reset();
+        empForm.reset();
       }
-    );
+      );
+
+      const closeButton = document.getElementById('add-employee-form');
+      closeButton.click();
   }
 
-  public onUpdateEmloyee(employee: Employee): void {
-    this.employeeService.updateEmployee(employee)
-      .subscribe((emp: Employee) => {
+
+  public onUpdateEmloyee(employee: Employee) {
+    this.employeeService.updateEmployee(employee).subscribe(
+      (emp: Employee) => {
         console.log(emp);
         this.getEmployees();
       },
@@ -59,7 +63,7 @@ export class AppComponent implements OnInit {
       );
   }
 
-  public onDeleteEmloyee(employeeId: number): void {
+  public onDeleteEmloyee(employeeId: number) {
     this.employeeService.deleteEmployee(employeeId).subscribe(
       (response: void) => {
         console.log(response);
@@ -71,40 +75,49 @@ export class AppComponent implements OnInit {
     );
   }
 
-  public searchEmployees(key: string): void {
+  public searchEmployees(key: string) {
     console.log(key);
     const results: Employee[] = [];
-    for (const employee of this.employees) {
-      if (employee.name.toLowerCase().indexOf(key.toLowerCase()) !== -1
-        || employee.email.toLowerCase().indexOf(key.toLowerCase()) !== -1
-        || employee.phone.toLowerCase().indexOf(key.toLowerCase()) !== -1
-        || employee.jobTitle.toLowerCase().indexOf(key.toLowerCase()) !== -1) {
-        results.push(employee);
+    
+    this.employees.forEach((emp)=> {
+      if (emp.name.toLowerCase().indexOf(key.toLowerCase()) !== -1
+        || emp.email.toLowerCase().indexOf(key.toLowerCase()) !== -1
+        || emp.phone.toLowerCase().indexOf(key.toLowerCase()) !== -1
+        || emp.jobTitle.toLowerCase().indexOf(key.toLowerCase()) !== -1) {
+        results.push(emp);
       }
-    }
+    });
+   
     this.employees = results;
+   
     if (results.length === 0 || !key) {
       this.getEmployees();
     }
+
   }
 
-  public onOpenModal(employee: Employee, mode: string): void {
-    const container = document.getElementById('main-container');
+  public onOpenModal(employee: Employee, operation: string) {
+    // create a button for add, edit, and delete functions 
     const button = document.createElement('button');
     button.type = 'button';
     button.style.display = 'none';
     button.setAttribute('data-toggle', 'modal');
-    if (mode === 'add') {
+    
+    if (operation === 'add') {
       button.setAttribute('data-target', '#addEmployeeModal');
     }
-    if (mode === 'edit') {
+    if (operation === 'edit') {
       this.editEmployee = employee;
       button.setAttribute('data-target', '#updateEmployeeModal');
     }
-    if (mode === 'delete') {
+    if (operation === 'delete') {
       this.deleteEmployee = employee;
       button.setAttribute('data-target', '#deleteEmployeeModal');
     }
+
+
+    const container = document.getElementById('main-container');
+    // add this button into main element
     container.appendChild(button);
     button.click();
   }
